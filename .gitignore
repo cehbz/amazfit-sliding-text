@@ -1,0 +1,7 @@
+zeppos-samples/
+.DS_Store
+.envrc
+.nvmrc
+.direnv/
+*.zab
+simple/dist/
