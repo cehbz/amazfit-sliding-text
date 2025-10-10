@@ -5,3 +5,6 @@ zeppos-samples/
 .direnv/
 *.zab
 simple/dist/
+temp/
+dist/
+.vscode/
