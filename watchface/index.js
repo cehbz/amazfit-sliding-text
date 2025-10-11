@@ -92,18 +92,18 @@
       // Update hour
       const hourName = hourNames[hour];
       hourImg.setProperty(hmUI.prop.MORE, {
-        src: `assets/hours/${hourName}.png`
+        src: `hours/${hourName}.png`
       });
       
       // Update minutes
       const { minute1, minute2 } = getMinuteTexts(minute);
       minute1Img.setProperty(hmUI.prop.MORE, {
-        src: `assets/minutes/${minute1}.png`
+        src: `minutes/${minute1}.png`
       });
       
       if (minute2) {
         minute2Img.setProperty(hmUI.prop.MORE, {
-          src: `assets/minutes/${minute2}.png`
+          src: `minutes/${minute2}.png`
         });
         minute2Img.setProperty(hmUI.prop.VISIBLE, true);
       } else {
@@ -112,7 +112,7 @@
       
       // Update day of week
       dayImg.setProperty(hmUI.prop.MORE, {
-        src: `assets/days/${dayNames[week]}.png`
+        src: `days/${dayNames[week]}.png`
       });
       
       // Update date (day of month)
@@ -121,7 +121,7 @@
       
       if (dateTens > 0) {
         dateTensImg.setProperty(hmUI.prop.MORE, {
-          src: `assets/digits/${dateTens}.png`
+          src: `digits/${dateTens}.png`
         });
         dateTensImg.setProperty(hmUI.prop.VISIBLE, true);
       } else {
@@ -129,12 +129,12 @@
       }
       
       dateOnesImg.setProperty(hmUI.prop.MORE, {
-        src: `assets/digits/${dateOnes}.png`
+        src: `digits/${dateOnes}.png`
       });
       
       // Update month
       monthImg.setProperty(hmUI.prop.MORE, {
-        src: `assets/months/${monthNames[month]}.png`
+        src: `months/${monthNames[month]}.png`
       });
     }
     
@@ -148,7 +148,7 @@
           y: 0,
           w: 390,
           h: 450,
-          color: 0x00FF00, // Green for development, change to 0xFFFFFF for production
+          color: "0xF6ECAF",
           radius: 0,
           show_level: hmUI.show_level.ONLY_NORMAL,
         });
@@ -161,7 +161,7 @@
           y: 72,
           w: 284,
           h: 103,
-          src: "assets/hours/twelve.png",
+          src: "hours/twelve.png",
           show_level: hmUI.show_level.ONLY_NORMAL,
         });
         
@@ -171,7 +171,7 @@
           y: 184,
           w: 279,
           h: 69,
-          src: "assets/minutes/oclock.png",
+          src: "minutes/oclock.png",
           show_level: hmUI.show_level.ONLY_NORMAL,
         });
         
@@ -181,7 +181,7 @@
           y: 252,
           w: 279,
           h: 69,
-          src: "assets/minutes/one.png",
+          src: "minutes/one.png",
           show_level: hmUI.show_level.ONLY_NORMAL,
         });
         
@@ -191,7 +191,7 @@
           y: 414,
           w: 160,
           h: 34,
-          src: "assets/days/monday.png",
+          src: "days/monday.png",
           show_level: hmUI.show_level.ONLY_NORMAL,
         });
         
@@ -201,7 +201,7 @@
           y: 416,
           w: 17,
           h: 24,
-          src: "assets/digits/0.png",
+          src: "digits/0.png",
           show_level: hmUI.show_level.ONLY_NORMAL,
         });
         
@@ -211,7 +211,7 @@
           y: 416,
           w: 17,
           h: 24,
-          src: "assets/digits/0.png",
+          src: "digits/0.png",
           show_level: hmUI.show_level.ONLY_NORMAL,
         });
         
@@ -221,7 +221,7 @@
           y: 414,
           w: 148,
           h: 34,
-          src: "assets/months/january.png",
+          src: "months/january.png",
           show_level: hmUI.show_level.ONLY_NORMAL,
         });
         
