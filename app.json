@@ -1,8 +1,8 @@
 {
   "configVersion": "v2",
   "app": {
-    "appId": 25100920,
-    "appName": "Sliding Text",
+    "appId": 25100921,
+    "appName": "Font Test",
     "appType": "watchface",
     "version": {
       "code": 1,
@@ -10,7 +10,7 @@
     },
     "icon": "icon.png",
     "vender": "zepp",
-    "description": "Pebble-style sliding text watchface for Bip 6"
+    "description": "TEXT_FONT minimal test"
   },
   "permissions": [],
   "runtime": {
@@ -22,7 +22,7 @@
   },
   "i18n": {
     "en-US": {
-      "appName": "Sliding Text"
+      "appName": "Font Test"
     }
   },
   "defaultLanguage": "en-US",
