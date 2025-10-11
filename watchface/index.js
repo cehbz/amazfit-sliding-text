@@ -14,7 +14,7 @@
     fontRegular: 'fonts/Optima-Regular.ttf',
     fontBold: 'fonts/Optima-Bold.ttf',
     backgroundColor: 0xF6ECAF,      // Cream background
-    textColor: 0x000000,            // Black text
+    textColor: 0xFFFFFF,            // White text
     
     // Layout for right-side vertical centering
     hourSize: 72,
@@ -165,6 +165,14 @@
         show_level: hmUI.show_level.ONLY_NORMAL,
       });
       
+      // Create background image
+      hmUI.createWidget(hmUI.widget.IMG, {
+        x: 0,
+        y: 0,
+        src: 'background.png',
+        show_level: hmUI.show_level.ONLY_NORMAL,
+      });
+
       // Create hour text widget (BOLD, right-aligned)
       hourText = hmUI.createWidget(hmUI.widget.TEXT, {
         x: CONFIG.textX,
