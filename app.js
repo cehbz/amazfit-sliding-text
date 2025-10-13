@@ -1,3 +1,12 @@
+// Shared error logging function
+function logError(error, source) {
+    console.log(`[Sliding Text] ${source} Error:`, error);
+    if (error && error.stack) {
+        console.log('error stack:');
+        error.stack.split(/\n/).forEach(i => console.log('    ', i));
+    }
+}
+
 try {
     (() => {
         const __$$app$$__ = __$$hmAppManager$$__.currentApp;
@@ -85,16 +94,16 @@ try {
             onDestroy(options) {
             },
             onError(error) {
+                logError(error, 'onError');
             },
             onPageNotFound(obj) {
             },
             onUnhandledRejection(obj) {
+                logError(obj.reason, 'onUnhandledRejection');
             }
         });
         ;
     })();
 } catch (e) {
-    console.log('Mini Program Error', e);
-    e && e.stack && e.stack.split(/\n/).forEach(i => console.log('error stack', i));
-    ;
+    logError(e, 'catch');
 }

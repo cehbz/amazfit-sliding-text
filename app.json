@@ -2,7 +2,7 @@
   "configVersion": "v2",
   "app": {
     "appId": 25100921,
-    "appName": "Font Test",
+    "appName": "Sliding Text",
     "appType": "watchface",
     "version": {
       "code": 1,
@@ -22,7 +22,7 @@
   },
   "i18n": {
     "en-US": {
-      "appName": "Font Test"
+      "appName": "Sliding Text"
     }
   },
   "defaultLanguage": "en-US",

@@ -8,6 +8,8 @@
   
   // Sensor reference
   let timeSensor = null;
+  let isVisible = true;
+  let displayedDay = -1;
   
   // Configuration
   const CONFIG = {
@@ -36,70 +38,59 @@
   
   // Hour names (12-hour format, lowercase)
   const hourNames = [
-    "twelve", "one", "two", "three", "four", "five",
-    "six", "seven", "eight", "nine", "ten", "eleven"
+    "twelve", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven"
+  ];
+  
+  // Minute names for tens place
+  const minuteTens = [
+    "oh", "ten", "twenty", "thirty", "forty", "fifty"
   ];
   
   // Minute names for ones place (0-9)
   const minuteOnes = [
-    "", "one", "two", "three", "four", "five",
-    "six", "seven", "eight", "nine"
+    "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"
   ];
   
-  // Minute names for tens place
-  const minuteTens = {
-    0: "oh",
-    1: "ten",
-    2: "twenty",
-    3: "thirty",
-    4: "forty",
-    5: "fifty"
-  };
-  
-  // Special minute names (10-20, 30, 40, 50)
-  const specialMinutes = [
-    null, null, null, null, null, null, null, null, null, null,
-    "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
-    "sixteen", "seventeen", "eighteen", "nineteen", "twenty"
+  // Special minute names
+  const minuteTeens = [
+    "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
   ];
   
   // Day names (0=Sunday through 6=Saturday)
   const dayNames = [
-    "sunday", "monday", "tuesday", "wednesday",
-    "thursday", "friday", "saturday"
+    "", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
   ];
   
   // Month names (1-12)
   const monthNames = [
-    "", "january", "february", "march", "april", "may", "june",
-    "july", "august", "september", "october", "november", "december"
+    "", "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"
   ];
   
   /**
    * Get minute text(s) based on current minute value
    * Returns object with minute1 and minute2 (minute2 may be null)
    */
-  function getMinuteTexts(minute) {
-    // Special case: :00 shows "o'clock" as single line
+  function getMinutes(minute) {
+    // :00 shows "o'clock" as single line
     if (minute === 0) {
       return { minute1: "o'clock", minute2: null };
     }
-    
-    // :10-:20, :30, :40, :50: single line
-    if ((minute >= 10 && minute <= 20) || minute === 30 || minute === 40 || minute === 50) {
-      return { 
-        minute1: specialMinutes[minute] || minuteTens[Math.floor(minute / 10)], 
-        minute2: null 
-      };
-    }
-    
-    // All other minutes (01-09, 21-29, 31-39, 41-49, 51-59): two lines
+
     const tens = Math.floor(minute / 10);
     const ones = minute % 10;
-    return {
-      minute1: minuteTens[tens],
-      minute2: minuteOnes[ones]
-    };
+
+    // :10, :20, :30, :40, :50, single line
+    if (ones === 0) {
+      return { minute1: minuteTens[tens], minute2: null };
+    }
+    
+    // :11-:19, single line
+    if (11 <= minute && minute <= 19) {
+      return { minute1: minuteTeens[minute-11], minute2: null};
+    }
+    
+    // Everything else: two lines
+    return { minute1: minuteTens[tens], minute2: minuteOnes[ones] };
   }
   
   /**
@@ -113,15 +104,13 @@
    * Update all display elements based on current time
    */
   function updateDisplay() {
-    if (!timeSensor) return;
-    
+    if (!isVisible || !timeSensor) return;
+
     const hour = timeSensor.hour % 12;
     const minute = timeSensor.minute;
     const day = timeSensor.day;
     const week = timeSensor.week;
     const month = timeSensor.month;
-    
-    console.log(`[WATCHFACE] Updating: ${hour}:${minute}, ${formatDate(week, day, month)}`);
     
     // Update hour (lowercase, bold)
     const hourName = hourNames[hour];
@@ -130,7 +119,7 @@
     });
     
     // Update minutes
-    const { minute1, minute2 } = getMinuteTexts(minute);
+    const { minute1, minute2 } = getMinutes(minute);
     minute1Text.setProperty(hmUI.prop.MORE, {
       text: minute1
     });
@@ -143,17 +132,18 @@
     } else {
       minute2Text.setProperty(hmUI.prop.VISIBLE, false);
     }
-    
-    // Update date
-    dateText.setProperty(hmUI.prop.MORE, {
-      text: formatDate(week, day, month)
-    });
+
+    if (day !== displayedDay) {
+      // Update date
+      displayedDay = day;
+      dateText.setProperty(hmUI.prop.MORE, {
+        text: formatDate(week, day, month)
+      });
+    }
   }
   
   __$$module$$__.module = DeviceRuntimeCore.WatchFace({
     init_view() {
-      console.log('[WATCHFACE] init_view START');
-      
       // Create background
       hmUI.createWidget(hmUI.widget.FILL_RECT, {
         x: 0,
@@ -237,35 +227,28 @@
         show_level: hmUI.show_level.ONLY_NORMAL,
       });
       
-      console.log('[WATCHFACE] All widgets created');
-      
       // Create time sensor
       timeSensor = hmSensor.createSensor(hmSensor.id.TIME);
-      console.log('[WATCHFACE] Time sensor created');
-      
       // Set initial display
       updateDisplay();
-      console.log('[WATCHFACE] Initial display set');
-      
       // Listen for minute changes
       timeSensor.addEventListener(timeSensor.event.MINUTEEND, function () {
-        console.log('[WATCHFACE] MINUTEEND event fired');
         updateDisplay();
       });
       
       // Handle resume (when watchface comes back to foreground)
       hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, {
         resume_call: function () {
-          console.log('[WATCHFACE] RESUME event fired');
+          isVisible = true;
           updateDisplay();
         },
+        pause_call: function () {
+          isVisible = false;
+        },
       });
-      
-      console.log('[WATCHFACE] init_view COMPLETE');
     },
     
     build() {
-      console.log('[WATCHFACE] build() called');
       this.init_view();
     },
   });
