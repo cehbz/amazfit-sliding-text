@@ -1,16 +1,21 @@
 // Complete Pebble-style sliding text watchface with Optima fonts
 (() => {
+  // Constants
+  const SCREEN_WIDTH = 390;
+  const SCREEN_HEIGHT = 450;
+  const RIGHT_MARGIN = 15;
+  
   // Widget references
   let hourText = null;
   let minute1Text = null;
   let minute2Text = null;
   let dateText = null;
   
-  // Sensor reference
+  // State
   let timeSensor = null;
   let isVisible = true;
   let displayedDay = -1;
-  
+
   // Configuration
   const CONFIG = {
     fontRegular: 'fonts/Optima-Regular.ttf',
@@ -23,9 +28,9 @@
     minuteSize: 56,
     dateSize: 24,
     
-    // Right-aligned text positioning (with 1em right margin)
-    textX: 0,           // Left edge for right-aligned text
-    textWidth: 375,     // 390 - 15 = right margin
+    // Right-aligned text positioning
+    textX: 0,
+    textWidth: SCREEN_WIDTH - RIGHT_MARGIN,
     
     // Vertical positioning (centered on right side)
     hourY: 120,
@@ -38,7 +43,8 @@
   
   // Hour names (12-hour format, lowercase)
   const hourNames = [
-    "twelve", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven"
+    "twelve", "one", "two", "three", "four", "five", 
+    "six", "seven", "eight", "nine", "ten", "eleven"
   ];
   
   // Minute names for tens place
@@ -48,22 +54,26 @@
   
   // Minute names for ones place (0-9)
   const minuteOnes = [
-    "", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"
+    "", "one", "two", "three", "four", "five", 
+    "six", "seven", "eight", "nine"
   ];
   
-  // Special minute names
+  // Minute names for "teens"
   const minuteTeens = [
-    "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"
+    "eleven", "twelve", "thirteen", "fourteen", "fifteen", 
+    "sixteen", "seventeen", "eighteen", "nineteen"
   ];
   
-  // Day names (0=Sunday through 6=Saturday)
+  // Day names
   const dayNames = [
-    "", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
+    "", "monday", "tuesday", "wednesday", "thursday", 
+    "friday", "saturday", "sunday"
   ];
   
   // Month names (1-12)
   const monthNames = [
-    "", "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"
+    "", "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december"
   ];
   
   /**
@@ -86,7 +96,7 @@
     
     // :11-:19, single line
     if (11 <= minute && minute <= 19) {
-      return { minute1: minuteTeens[minute-11], minute2: null};
+      return { minute1: minuteTeens[minute - 11], minute2: null };
     }
     
     // Everything else: two lines
@@ -133,8 +143,8 @@
       minute2Text.setProperty(hmUI.prop.VISIBLE, false);
     }
 
+    // Only update date when day changes
     if (day !== displayedDay) {
-      // Update date
       displayedDay = day;
       dateText.setProperty(hmUI.prop.MORE, {
         text: formatDate(week, day, month)
@@ -148,8 +158,8 @@
       hmUI.createWidget(hmUI.widget.FILL_RECT, {
         x: 0,
         y: 0,
-        w: 390,
-        h: 450,
+        w: SCREEN_WIDTH,
+        h: SCREEN_HEIGHT,
         color: CONFIG.backgroundColor,
         radius: 0,
         show_level: hmUI.show_level.ONLY_NORMAL,
@@ -175,7 +185,7 @@
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
         font: CONFIG.fontBold,
-        text: 'twelve',
+        text: '',
         show_level: hmUI.show_level.ONLY_NORMAL,
       });
       
@@ -191,7 +201,7 @@
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
         font: CONFIG.fontRegular,
-        text: "o'clock",
+        text: '',
         show_level: hmUI.show_level.ONLY_NORMAL,
       });
       
@@ -207,7 +217,7 @@
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
         font: CONFIG.fontRegular,
-        text: 'one',
+        text: '',
         show_level: hmUI.show_level.ONLY_NORMAL,
       });
       
@@ -215,7 +225,7 @@
       dateText = hmUI.createWidget(hmUI.widget.TEXT, {
         x: 0,
         y: CONFIG.dateY,
-        w: 390,
+        w: SCREEN_WIDTH,
         h: 40,
         text_size: CONFIG.dateSize,
         color: CONFIG.textColor,
@@ -223,26 +233,26 @@
         align_v: hmUI.align.CENTER_V,
         text_style: hmUI.text_style.NONE,
         font: CONFIG.fontRegular,
-        text: 'thursday, 11 october',
+        text: '',
         show_level: hmUI.show_level.ONLY_NORMAL,
       });
       
       // Create time sensor
       timeSensor = hmSensor.createSensor(hmSensor.id.TIME);
+      
       // Set initial display
       updateDisplay();
-      // Listen for minute changes
-      timeSensor.addEventListener(timeSensor.event.MINUTEEND, function () {
-        updateDisplay();
-      });
       
-      // Handle resume (when watchface comes back to foreground)
+      // Listen for minute changes
+      timeSensor.addEventListener(timeSensor.event.MINUTEEND, updateDisplay);
+      
+      // Handle visibility changes
       hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, {
-        resume_call: function () {
+        resume_call: () => {
           isVisible = true;
           updateDisplay();
         },
-        pause_call: function () {
+        pause_call: () => {
           isVisible = false;
         },
       });

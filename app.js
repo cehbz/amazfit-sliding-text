@@ -1,5 +1,9 @@
 // Shared error logging function
+const DEBUG = true;  // Set to false for production
+
 function logError(error, source) {
+    if (!DEBUG) return;
+    
     console.log(`[Sliding Text] ${source} Error:`, error);
     if (error && error.stack) {
         console.log('error stack:');
@@ -18,7 +22,7 @@ try {
         }
         __$$app$$__.__globals__ = {
             lang: new DeviceRuntimeCore.HmUtils.Lang(DeviceRuntimeCore.HmUtils.getLanguage()),
-            px: DeviceRuntimeCore.HmUtils.getPx(480)
+            px: DeviceRuntimeCore.HmUtils.getPx(390)  // Fixed: Match Bip 6 designWidth
         };
         const {px} = __$$app$$__.__globals__;
         const languageTable = {};
@@ -63,7 +67,11 @@ try {
             globalNS.setTimeout = function setTimeout2(func, ns) {
                 const timer1 = timer.createTimer(ns || 1, Number.MAX_SAFE_INTEGER, function () {
                     globalNS.clearTimeout(timer1);
-                    func && func();
+                    try {
+                        func && func();
+                    } catch (e) {
+                        logError(e, 'setTimeout');
+                    }
                 }, {});
                 return timer1;
             };
@@ -73,7 +81,11 @@ try {
             globalNS.setImmediate = function setImmediate(func) {
                 const timer1 = timer.createTimer(1, Number.MAX_SAFE_INTEGER, function () {
                     globalNS.clearImmediate(timer1);
-                    func && func();
+                    try {
+                        func && func();
+                    } catch (e) {
+                        logError(e, 'setImmediate');
+                    }
                 }, {});
                 return timer1;
             };
@@ -82,7 +94,11 @@ try {
             };
             globalNS.setInterval = function setInterval(func, ms) {
                 const timer1 = timer.createTimer(1, ms, function () {
-                    func && func();
+                    try {
+                        func && func();
+                    } catch (e) {
+                        logError(e, 'setInterval');
+                    }
                 }, {});
                 return timer1;
             };
