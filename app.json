@@ -35,7 +35,7 @@
           "main": 1,
           "editable": 0,
           "lockscreen": 0,
-          "hightCost": 0
+          "highCost": 0
         }
       },
       "platforms": [

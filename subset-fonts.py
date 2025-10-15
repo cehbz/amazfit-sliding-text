@@ -4,10 +4,10 @@ Font subsetting tool for Pebble-style watchface.
 Reduces font file sizes by keeping only required glyphs.
 
 Usage:
-    python3 subset_fonts.py [fonts_dir] [output_dir]
+    python3 subset-fonts.py [fonts_dir] [output_dir]
     
 Example:
-    python3 subset_fonts.py assets/bip6/fonts assets/bip6/fonts-subsetted
+    python3 subset-fonts.py assets/bip6/fonts assets/bip6/fonts-subsetted
 """
 
 import sys
@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 
 try:
-    from fontTools import subset
+    from fontTools import subset # pyright: ignore[reportMissingImports]
 except ImportError:
     print("Error: fonttools not installed", file=sys.stderr)
     print("Install with: pip3 install fonttools", file=sys.stderr)

@@ -13,7 +13,7 @@
   
   // State
   let timeSensor = null;
-  let isVisible = true;
+  let listening = false;
   let displayedDay = -1;
 
   // Configuration
@@ -114,7 +114,7 @@
    * Update all display elements based on current time
    */
   function updateDisplay() {
-    if (!isVisible || !timeSensor) return;
+    if (!timeSensor) return;
 
     const hour = timeSensor.hour % 12;
     const minute = timeSensor.minute;
@@ -243,17 +243,19 @@
       // Set initial display
       updateDisplay();
       
-      // Listen for minute changes
-      timeSensor.addEventListener(timeSensor.event.MINUTEEND, updateDisplay);
       
       // Handle visibility changes
       hmUI.createWidget(hmUI.widget.WIDGET_DELEGATE, {
         resume_call: () => {
-          isVisible = true;
           updateDisplay();
+          if (listening) return;
+          timeSensor.addEventListener(timeSensor.event.MINUTEEND, updateDisplay);
+          listening = true;
         },
         pause_call: () => {
-          isVisible = false;
+          if (!listening) return;
+          timeSensor.removeEventListener(timeSensor.event.MINUTEEND, updateDisplay);
+          listening = false;
         },
       });
     },
